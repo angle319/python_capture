@@ -4,6 +4,14 @@ import mss
 import imutils
 import cv2
 sct=mss.mss()
+A_img = cv2.imread("img\A.png")
+A_img = cv2.cvtColor(A_img, cv2.COLOR_RGB2GRAY)
+S_img = cv2.imread("img\S.png")
+S_img = cv2.cvtColor(S_img, cv2.COLOR_RGB2GRAY)
+D_img = cv2.imread("img\D.png")
+D_img = cv2.cvtColor(D_img, cv2.COLOR_RGB2GRAY)
+W_img = cv2.imread("img\W.png")
+W_img = cv2.cvtColor(W_img, cv2.COLOR_RGB2GRAY)
 def BDOCompareFishingSpace():
     region = {'top': 227, 'left': 921, 'width': 73, 'height': 27}
     sct_img = sct.grab(region)
@@ -58,14 +66,7 @@ def findall(search, image, threshold=0.7):
     return points
 
 def analisysKeyBoard(image):
-    A_img = cv2.imread("img\A.png")
-    A_img = cv2.cvtColor(A_img, cv2.COLOR_RGB2GRAY)
-    S_img = cv2.imread("img\S.png")
-    S_img = cv2.cvtColor(S_img, cv2.COLOR_RGB2GRAY)
-    D_img = cv2.imread("img\D.png")
-    D_img = cv2.cvtColor(D_img, cv2.COLOR_RGB2GRAY)
-    W_img = cv2.imread("img\W.png")
-    W_img = cv2.cvtColor(W_img, cv2.COLOR_RGB2GRAY)
+    
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HLS)  
     lower_red = numpy.array([0, 25, 25])  
     upper_red = numpy.array([255, 230, 255])  

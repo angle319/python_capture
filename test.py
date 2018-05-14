@@ -58,24 +58,28 @@ def findall(search, image, threshold=0.7):
     return points
 
 #def analisysKeyBoard():
-image = cv2.imread("k3.png")
-A_img = cv2.imread("img\A.png")
+image = cv2.imread("undefined_img/k1.png")
+A_img = cv2.imread("img/A.png")
 A_img = cv2.cvtColor(A_img, cv2.COLOR_RGB2GRAY)
-S_img = cv2.imread("img\S.png")
+S_img = cv2.imread("img/S.png")
 S_img = cv2.cvtColor(S_img, cv2.COLOR_RGB2GRAY)
-D_img = cv2.imread("img\D.png")
+D_img = cv2.imread("img/D.png")
 D_img = cv2.cvtColor(D_img, cv2.COLOR_RGB2GRAY)
-W_img = cv2.imread("img\W.png")
+W_img = cv2.imread("img/W.png")
 W_img = cv2.cvtColor(W_img, cv2.COLOR_RGB2GRAY)
 # gray = cv2.cvtColor(image, cv2.COLOR_RGBA2GRAY)
 # thresh = cv2.threshold(gray, 100, 255, cv2.THRESH_BINARY)[1]
 
 
 # Threshold the HSV image to get only blue colors  
+
 hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HLS)  
+
+#hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HLS)  
+#lower_red = numpy.array([0, 0, 100])  
+#upper_red = numpy.array([0, 20, 230])  
 lower_red = numpy.array([0, 25, 25])  
 upper_red = numpy.array([255, 230, 255])  
-
 mask = cv2.inRange(hsv, lower_red, upper_red) #lower20===>0,upper200==>0  
 
 # threshimage = cv2.threshold(gray, 100, 240, cv2.THRESH_BINARY) [1]
@@ -86,16 +90,16 @@ mask = cv2.inRange(hsv, lower_red, upper_red) #lower20===>0,upper200==>0
 # result=cv2.matchTemplate(mask,A_img,cv2.TM_CCOEFF);
 # threshold = 0.8
 # loc = numpy.where(result >= threshold) 
-# min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
+# min_val, max_val, min_loc, max_loc = cv2.minMahsv = cv2.cvtColor(image, cv2.COLOR_BGR2HLS)  xLoc(result)
 # top_left = max_loc
 # bottom_right = (top_left[0] + w, top_left[1] + h)
 # print bottom_right
 # cv2.rectangle(mask,top_left, bottom_right, 255, 2)
 
-positions_a = findall(A_img, mask, 0.5)
-positions_s = findall(S_img, mask, 0.5)
-positions_d = findall(D_img, mask, 0.5)
-positions_w = findall(W_img, mask, 0.5)
+positions_a = findall(A_img, mask, 0.6)
+positions_s = findall(S_img, mask, 0.6)
+positions_d = findall(D_img, mask, 0.6)
+positions_w = findall(W_img, mask, 0.6)
 
 element={}
 def intoArray(collection,key):
@@ -107,6 +111,7 @@ intoArray(positions_d,'D')
 intoArray(positions_w,'W')
 ket_list=element.keys()
 ket_list.sort()
+print positions_s
 print element
 print ket_list
 print {'sort_key':ket_list,'data':element }
