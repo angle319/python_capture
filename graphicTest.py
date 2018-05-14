@@ -3,8 +3,10 @@
 import argparse
 import imutils
 import cv2
- 
+import mss
 # construct the argument parse and parse the arguments
+
+sct=mss.mss()
 ap = argparse.ArgumentParser()
 ap.add_argument("-i", "--image", required=True,
     help="path to the input image")
@@ -14,8 +16,8 @@ args = vars(ap.parse_args())
 # and threshold it
 image = cv2.imread(args["image"])
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-thresh = cv2.threshold(blurred, 60, 255, cv2.THRESH_BINARY)[1]
+blurred = cv2.GaussianBlur(gray, (1,1), 0)
+thresh = cv2.threshold(gray, 190, 255, cv2.THRESH_BINARY)[1]
 canny = cv2.Canny(thresh, 50, 150)  
 # find contours in the thresholded image
 # cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,
@@ -37,6 +39,6 @@ canny = cv2.Canny(thresh, 50, 150)
 # 	cv2.imshow("Image", thresh)
 # 	cv2.waitKey(0)
 
-
-cv2.imshow("Image", canny)
+cv2.imwrite('space_analysis.jpg', thresh)
+cv2.imshow("Image", thresh)
 cv2.waitKey(0)
