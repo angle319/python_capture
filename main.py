@@ -26,9 +26,13 @@ class getPicTask(threading.Thread):
 
     def terminate(self):
         self._running = False
-
-
+    
     def run(self, i):
+        def getNowTime():
+            now=datetime.datetime.now()
+            timestamp = time.mktime(now.timetuple())
+            return timestamp
+
         isFishing=False
         isSpace=False
         while (self._running):
@@ -39,11 +43,14 @@ class getPicTask(threading.Thread):
 
             #print datetime.datetime.now()
             if analisys.BDOCompareFishingSpace():
+                startTime=getNowTime()
                 time.sleep(1)
                 dd('space') 
                 time.sleep(1)
                 isSpace=True
                 while isSpace and self._running:
+                    if (getNowTime()-startTime)>3:
+                        isSpace=False
                     sct_img = sct.grab(region)
                     im = Image.frombytes('RGB', sct_img.size, sct_img.bgra, 'raw',
                                         'BGRX')
@@ -90,24 +97,36 @@ class getPicTask(threading.Thread):
                                     rb, gb, bb = im.getpixel((index, v_bottom))
                                     if not(rt>=222 and gt>=222 and bt>=222 and rb>=222 and gb >=222 and bb>=222):
                                         isGame=True
-                                        im.save("general.png")
                                         
                                 if isGame:
                                     isFishing=False
                                     game_img=analisys.captureFishingGame()
-                                    keyboardData=analisys.analisysKeyBoard(numpy.array(game_img))
+                                    keyboardData=analisys.analisysHLSKeyBoard(numpy.array(game_img))
+                                    if len(keyboardData['sort_key'])==0:
+                                        keyboardData=analisys.analisysHSVKeyBoard(numpy.array(game_img))
                                     if len(keyboardData['sort_key'])>0:
                                         for key in keyboardData['sort_key']:
                                             collection=keyboardData['data']
-                                            print collection[key]
+                                            #print collection[key]
                                             dd(collection[key])
                                             time.sleep(0.1)
+                                    else:
+                                        
+                                        #mss.tools.to_png(game_img.rgb, game_img.size, output="log"+timestamp.__str__()+".png")
+                                        print "fail not find"
                             print "catch end "
-                            time.sleep(10)
+                            time.sleep(3)
+                            print "start capture package "
+                            if analisys.isCapturePackage():
+                                dd('r')
+                            print "end capture package"
                             isSpace=False
                             img = ImageTk.PhotoImage(im)
                             img_panel.configure(image=img)
                             img_panel.image = img
+                            time.sleep(1)
+                            dd('space')
+                            time.sleep(10)
                             #pyautogui.keyDown('space')
                             #pyautogui.keyUp('space')
                             #pyautogui.press('space')
@@ -118,7 +137,6 @@ class getPicTask(threading.Thread):
             else:
                 time.sleep(1)
             
-
 
 
 window = tk.Tk()
