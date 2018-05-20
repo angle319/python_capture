@@ -15,12 +15,18 @@ from key_control.dd import dd
 import analisys as analisys
 
 sct= mss.mss()
+sct_health= mss.mss()
 # The screen part to capture
-region = {'top': 400, 'left': 998, 'width': 100, 'height': 30}
+
 # Grab the data
 rgb1 = numpy.array([1,1,0])
 print rgb1
+on_hit = False
+thead_arr = []
+
+
 class getPicTask(threading.Thread):
+    region = {'top': 400, 'left': 998, 'width': 100, 'height': 30}
     def __init__(self):
         self._running = True
 
@@ -114,8 +120,9 @@ class getPicTask(threading.Thread):
                                         
                                         #mss.tools.to_png(game_img.rgb, game_img.size, output="log"+timestamp.__str__()+".png")
                                         print "fail not find"
+                            time.sleep(2)
                             print "catch end "
-                            time.sleep(3)
+                            time.sleep(2)
                             print "start capture package "
                             if analisys.isCapturePackage():
                                 dd('r')
@@ -136,7 +143,57 @@ class getPicTask(threading.Thread):
                         #print 'this is a number: ', i, impx
             else:
                 time.sleep(1)
-            
+
+
+
+
+class talkback(threading.Thread):
+    def __init__(self):
+        self._running = True
+
+    def terminate(self):
+        self._running = False
+    
+    def run(self):
+             
+        while True:
+            sct_img = sct_health.grab({'top': 959, 'left': 809, 'width': 300, 'height': 18})
+            im = Image.frombytes('RGB', sct_img.size, sct_img.bgra, 'raw','BGRX')
+            voteAttack=0
+            for index in range(270, 290):
+                r,g,b= im.getpixel((index, 4))  
+                if r<20 and b<20 and g<20 and r==g==b : 
+                    print voteAttack
+                    voteAttack+=1
+
+            #if r!=204:
+            if voteAttack>7 :
+                mss.tools.to_png(sct_img.rgb, sct_img.size, output='dummy.png')
+                for x in thead_arr:
+                    x.terminate()
+                time.sleep(3)
+                dd('enter') 
+                time.sleep(0.2)
+                dd('QUEST') 
+                time.sleep(0.2)
+                dd('QUEST') 
+                time.sleep(0.2)
+                dd('QUEST') 
+                time.sleep(0.2)
+                dd('enter') 
+                time.sleep(60)
+                dd('space')    
+                time.sleep(300)
+                getPic = getPicTask()
+                thread = threading.Thread(target=getPic.run, args=(11, ))
+                thread.start()
+                thead_arr.append(getPic)
+            else:
+                time.sleep(2) 
+                    
+                
+          
+
 
 
 window = tk.Tk()
@@ -164,9 +221,6 @@ img_panel.pack()
 
 #color = win32gui.GetPixel(win32gui.GetDC(win32gui.GetActiveWindow()), x , y)
 
-on_hit = False
-
-thead_arr = []
 
 
 def hit_me():
@@ -182,7 +236,15 @@ def hit_me():
 def stop_me():
     for x in thead_arr:
         x.terminate()
-
+    for x in thead_arr_main:
+        x.terminate()
+thead_arr_main=[]
+def talk_back():
+    print "start talk"
+    talk = talkback()
+    talk_thread = threading.Thread(target=talk.run)
+    talk_thread.start()
+    thead_arr_main.append(talk)
 
 def ColorDistance(rgb1,rgb2):
     '''d = {} distance between two colors(3)'''
@@ -191,14 +253,16 @@ def ColorDistance(rgb1,rgb2):
     return d
 
 frame=Frame(window)
-frame.grid(row=2, column=0, columnspan=2)     
+frame.grid(row=1, column=0, columnspan=3)     
 b = tk.Button(frame, text='hit me', command=hit_me).grid(row=0,column=0)
 b = tk.Button(frame, text='stop me', command=stop_me).grid(row=0,column=1)
-
+b = tk.Button(frame, text='talk back', command=talk_back).grid(row=0,column=2)
 frame.pack()
 def on_closing():
     if messagebox.askokcancel("Quit", "Do you want to quit?"):
         for x in thead_arr:
+            x.terminate()
+        for x in thead_arr_main:
             x.terminate()
         window.destroy()
 window.protocol("WM_DELETE_WINDOW", on_closing)
