@@ -11,7 +11,7 @@ from PIL import ImageTk, Image
 import tkMessageBox as messagebox
 import numpy
 import mss
-from key_control.dd import dd
+from key_control.dd import dd,ddClick
 import analisys as analisys
 
 sct= mss.mss()
@@ -26,7 +26,7 @@ thead_arr = []
 
 
 class getPicTask(threading.Thread):
-    region = {'top': 400, 'left': 998, 'width': 100, 'height': 30}
+    
     def __init__(self):
         self._running = True
 
@@ -34,11 +34,12 @@ class getPicTask(threading.Thread):
         self._running = False
     
     def run(self, i):
+        _sct= mss.mss()
         def getNowTime():
             now=datetime.datetime.now()
             timestamp = time.mktime(now.timetuple())
             return timestamp
-
+ 
         isFishing=False
         isSpace=False
         while (self._running):
@@ -57,7 +58,7 @@ class getPicTask(threading.Thread):
                 while isSpace and self._running:
                     if (getNowTime()-startTime)>3:
                         isSpace=False
-                    sct_img = sct.grab(region)
+                    sct_img = _sct.grab({'top': 400, 'left': 998, 'width': 100, 'height': 30})
                     im = Image.frombytes('RGB', sct_img.size, sct_img.bgra, 'raw',
                                         'BGRX')
                     #mss.tools.to_png(sct_img.rgb, sct_img.size, output='dummy.png')
@@ -95,7 +96,7 @@ class getPicTask(threading.Thread):
                             print "catch"
                             isGame=False
                             while isFishing and self._running:
-                                sct_img = sct.grab(region)
+                                sct_img = sct.grab({'top': 400, 'left': 998, 'width': 100, 'height': 30})
                                 im = Image.frombytes('RGB', sct_img.size, sct_img.bgra, 'raw',
                                                     'BGRX')
                                 for index in range(0, 92):
@@ -120,12 +121,20 @@ class getPicTask(threading.Thread):
                                         
                                         #mss.tools.to_png(game_img.rgb, game_img.size, output="log"+timestamp.__str__()+".png")
                                         print "fail not find"
-                            time.sleep(2)
+                            time.sleep(1)
                             print "catch end "
                             time.sleep(2)
                             print "start capture package "
                             if analisys.isCapturePackage():
                                 dd('r')
+                            else:
+                                try:
+                                    pos=analisys.isCapturePackageByMouse()
+                                    for x,y in pos:
+                                        ddClick(x/2,y)
+                                except:
+                                    print('error to click')
+                                
                             print "end capture package"
                             isSpace=False
                             img = ImageTk.PhotoImage(im)
@@ -156,7 +165,7 @@ class talkback(threading.Thread):
     
     def run(self):
              
-        while True:
+        while (self._running):
             sct_img = sct_health.grab({'top': 959, 'left': 809, 'width': 300, 'height': 18})
             im = Image.frombytes('RGB', sct_img.size, sct_img.bgra, 'raw','BGRX')
             voteAttack=0
@@ -201,7 +210,7 @@ window.title('for test')
 window.geometry('300x400')
 screenWidth, screenHeight = pyautogui.size()
 #im = pyautogui.screenshot(region=(0, 0, 100, 100))
-sct_img = sct.grab(region)
+sct_img = sct.grab({'top': 400, 'left': 998, 'width': 100, 'height': 30})
 im=Image.frombytes('RGB', sct_img.size, sct_img.bgra, 'raw', 'BGRX')
 var = tk.StringVar()
 #pyautogui.alert(text='', title='', button='OK')

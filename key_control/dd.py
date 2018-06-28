@@ -41,5 +41,14 @@ def dd(key):
         dll.DD_key(500, 2)
     else:
         down_up(key)
+        
+def ddClick(x,y):
+    #double screen need divided by two 
+    dll.DD_mov(x,y)
+    time.sleep(0.1)
+    dll.DD_btn(1)
+    time.sleep(0.1)
+    dll.DD_btn(2)
+    
 time.sleep(0.5)
 down_up('win')

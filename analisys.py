@@ -59,26 +59,20 @@ def findall(search, image, threshold=0.7):
             break
     return points
 
-def isKeyItem(image):
+def isSomeItem(image,imagePath):
     gray = cv2.cvtColor(numpy.array(image), cv2.COLOR_BGR2GRAY)
-    key_img = cv2.imread("img\key.png")
+    key_img = cv2.imread(imagePath)
     key_img = cv2.cvtColor(key_img, cv2.COLOR_RGB2GRAY)
-    cv2.imwrite('key.png', key_img)
+    #cv2.imwrite('key.png', key_img)
     position=findall(key_img, gray, 0.6)
-    if len(position)>0:
-        print "is key"
-        return 1
-    return 0
+    return position
+
+def isKeyItem(image):
+    return 1 if len(isSomeItem(image,"img\key.png"))>0 else 0
+
 def isStoneItem(image):
-    gray = cv2.cvtColor(numpy.array(image), cv2.COLOR_BGR2GRAY)
-    stone_img = cv2.imread("img\stone.png")
-    stone_img = cv2.cvtColor(stone_img, cv2.COLOR_RGB2GRAY)
-    cv2.imwrite('stone.png', stone_img)
-    position=findall(stone_img, gray, 0.6)
-    if len(position)>0:
-        print "is stone"
-        return 1
-    return 0
+    return 1 if len(isSomeItem(image,"img\stone.png"))>0 else 0
+    
 def isColorPackage(image,_rgb):
     base_r,base_g,base_b=_rgb
     total=0
@@ -100,6 +94,20 @@ def isCapturePackage():
     if (isColorPackage(sct_img,(188,157,85))) or (isColorPackage(sct_img,(70,148,188))) or (isKeyItem(sct_img)) or (isStoneItem(sct_img)):
         return 1
     return 0
+
+def isCapturePackageByMouse():
+    region = {'top': 590, 'left': 1534, 'width': 193, 'height': 150}
+    sct_img = sct.grab(region)
+    position1=isSomeItem(sct_img,"img\item0.png")
+    position2=isSomeItem(sct_img,"img\item1.png")
+    temp=numpy.concatenate((position1,position2))
+    print temp
+    arr=[]
+    for x,y in temp:
+        arr.append((x+1534,y+590))
+    return arr
+    
+
 
 def BDOCompareFishingSpace():
     #region = {'top': 227, 'left': 921, 'width': 73, 'height': 27}
@@ -162,3 +170,4 @@ def analisysHSVKeyBoard(image):
     ket_list.sort()
     return {'sort_key':ket_list,'data':element }
 
+isCapturePackage()
