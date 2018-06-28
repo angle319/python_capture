@@ -58,7 +58,7 @@ def findall(search, image, threshold=0.7):
     return points
 
 #def analisysKeyBoard():
-image = cv2.imread("undefined_img/k1.png")
+image = cv2.imread("log1526303948.0.png")
 A_img = cv2.imread("img/A.png")
 A_img = cv2.cvtColor(A_img, cv2.COLOR_RGB2GRAY)
 S_img = cv2.imread("img/S.png")

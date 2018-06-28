@@ -42,13 +42,28 @@ class getPicTask(threading.Thread):
  
         isFishing=False
         isSpace=False
+        interval_drink=getNowTime()
+        interval_change_rod=getNowTime()
         while (self._running):
+            
             # print datetime.datetime.now()
             # im = pyautogui.screenshot(region=(0, 0, 200, 200))
 
             # print datetime.datetime.now()
 
             #print datetime.datetime.now()
+            if (getNowTime()-interval_change_rod)>(4.5*60*60):
+                #wait 600 sec and make drive
+                interval_change_rod=getNowTime()
+                dd('0')
+                print "change rod"
+            if (getNowTime()-interval_drink)>(10*60):
+                #wait 600 sec and make drive
+                interval_drink=getNowTime()
+                ddClick(1291,340)
+                time.sleep(1)
+                ddClick(1577,654)
+                print "make drink"
             if analisys.BDOCompareFishingSpace():
                 startTime=getNowTime()
                 time.sleep(1)
@@ -120,7 +135,7 @@ class getPicTask(threading.Thread):
                                     else:
                                         
                                         #mss.tools.to_png(game_img.rgb, game_img.size, output="log"+timestamp.__str__()+".png")
-                                        print "fail not find"
+                                        print "fail not find game"
                             time.sleep(1)
                             print "catch end "
                             time.sleep(2)
@@ -131,7 +146,7 @@ class getPicTask(threading.Thread):
                                 try:
                                     pos=analisys.isCapturePackageByMouse()
                                     for x,y in pos:
-                                        ddClick(x/2,y)
+                                        ddClick(x,y)
                                 except:
                                     print('error to click')
                                 
